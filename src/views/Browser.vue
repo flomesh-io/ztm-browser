@@ -8,6 +8,7 @@ import confirm from "@/utils/confirm";
 // import { invoke } from '@tauri-apps/api/core';
 import defaultIcon from "@/assets/img/apps/default.png";
 import { openWebview } from '@/utils/webview'
+import { ipcRenderer } from 'electron';
 const router = useRouter();
 const store = useStore();
 const appService = new AppService();
@@ -30,9 +31,9 @@ const openbrowser = () => {
 }
 const historys = ref([])
 const loadHistory = () => {
-	// invoke('get_store_list',{ key: 'history' }).then((list)=>{
-	// 	historys.value = list;
-	// });
+	ipcRenderer.invoke('get-data', 'history').then((res)=>{
+		historys.value = res;
+	})
 }
 const closebrowser = () => {
 	emits('close');
@@ -82,9 +83,10 @@ const start = (app) => {
 }
 const shortcutApps = ref([]);
 const loadshortcut = () => {
-	// invoke('get_store_list',{ key: 'shortcut' }).then((list)=>{
-	// 	shortcutApps.value = list;
-	// });
+	
+	ipcRenderer.invoke('get-data', 'shortcut').then((res)=>{
+		shortcutApps.value = res;
+	})
 }
 
 const removeStar = (idx) => {
@@ -93,12 +95,9 @@ const removeStar = (idx) => {
 		if(idx>=0){
 			_store_history.splice(idx,1);
 		}
-		// invoke('set_store_list', {
-		// 	key: 'history',
-		// 	value: _store_history
-		// }).then((res)=>{
-		// 	historys.value = _store_history;
-		// });
+		ipcRenderer.invoke('set-data', 'history', JSON.parse(JSON.stringify(_store_history))).then(()=>{
+			historys.value = _store_history;
+		});
 	});
 }
 const removeShortcut= (idx) => {
@@ -107,12 +106,11 @@ const removeShortcut= (idx) => {
 		if(idx>=0){
 			_store_shortcut.splice(idx,1);
 		}
-		// invoke('set_store_list', {
-		// 	key: 'shortcut',
-		// 	value: _store_shortcut
-		// }).then((res)=>{
-		// 	shortcutApps.value = _store_shortcut;
-		// });
+		
+		ipcRenderer.invoke('set-data', 'shortcut', JSON.parse(JSON.stringify(_store_shortcut))).then(()=>{
+			shortcutApps.value = _store_shortcut;
+		});
+		
 	});
 }
 const meshes = computed(() => {
@@ -144,7 +142,7 @@ const routeApp = (shortcut) => {
 		url:shortcut.href,
 		proxy: proxy.value
 	}
-	appService.openbrowser(app)
+	openWebview(shortcut.href,proxy.value?browser.value.listen:null)
 }
 
 onMounted(()=>{
@@ -163,7 +161,7 @@ onMounted(()=>{
 				</button>
 			</div>
 			<div style="padding: 5px 10px  5px 0;">
-				<Select size="small" optionLabel="name"  v-model="selectedMesh" :options="meshes" :placeholder="meshes.length==0?'No Mesh':'Mesh.'">
+				<Select class="mr-2" size="small" optionLabel="name"  v-model="selectedMesh" :options="meshes" :placeholder="meshes.length==0?'No Mesh':'Mesh.'">
 				</Select>
 				<Select size="small"  v-model="browser.listen" :options="listens" :placeholder="isRunning?'No Proxy':'Paused.'">
 					<template #dropdownicon>

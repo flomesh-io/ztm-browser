@@ -7,6 +7,20 @@ import ZtmService from '@/service/ZtmService';
 const ztmService = new ZtmService();
 export default class AppService {
 	
+	startApp({
+		mesh, ep, provider, app
+	}) {
+		return request(`/api/meshes/${mesh}/endpoints/${ep}/apps/${provider}/${app}`, "POST", {
+			isRunning: true
+		});
+	}
+	stopApp({
+		mesh, ep, provider, app
+	}) {
+		return request(`/api/meshes/${mesh}/endpoints/${ep}/apps/${provider}/${app}`, "POST", {
+			isRunning: false
+		});
+	}
 	getProxyListen(mesh) {
 		const options = {
 			mesh:mesh?.name,

@@ -1,5 +1,12 @@
 import {app,session, BaseWindow,BrowserWindow,BrowserView,WebContentsView, ipcMain, screen, contextBridge, ipcRenderer} from 'electron';
 import { join } from 'path';
+import { writeFileSync,readFileSync,existsSync } from 'fs';
+const historyPath = join(__dirname, 'history.json');
+
+let history = {};
+if (existsSync(historyPath)) {
+  history = JSON.parse(readFileSync(historyPath, 'utf8'));
+}
 
 // 创建窗口
 let win
@@ -9,7 +16,7 @@ const createWindow = (width, height) => {
 	  callback({
 	    responseHeaders: {
 	      ...details.responseHeaders,
-	      'Content-Security-Policy': ['default-src \'self\'; style-src \'self\' http://127.0.0.1:* \'unsafe-inline\';']
+	      'Content-Security-Policy': ['script-src * \'unsafe-inline\' \'unsafe-eval\';']
 	    }
 	  })
 	})
@@ -73,8 +80,8 @@ const createWindow = (width, height) => {
 					contextIsolation: false,
 					devTools: devTools == 'open',
 					webviewTag: true,
+		      preload: join(__dirname, 'preload.js'),
 				}
-		    //   preload: join(__dirname, 'preload.js'),
 		  });
 			console.log("8888")
 		  newWindow.loadURL(url); 
@@ -86,6 +93,24 @@ const createWindow = (width, height) => {
 		// setTimeout(() =>{
 		// 	win.webContents.send('load',{massage:"初始化完成"})
 		// },3000);
+		
+		// 设置共享数据并持久化
+		ipcMain.handle('set-data', async (event, key, value) => {
+		  history[key] = value;
+		  writeFileSync(historyPath, JSON.stringify(history), 'utf8'); 
+		});
+		ipcMain.handle('push-data', async (event, key, value) => {
+			if(!history[key]){
+				history[key] = []
+			}
+			history[key].push(value)
+		  writeFileSync(historyPath, JSON.stringify(history), 'utf8'); 
+		});
+		
+		// 获取共享数据
+		ipcMain.handle('get-data', async (event, key) => {
+		  return history[key];
+		});
 }
 
 

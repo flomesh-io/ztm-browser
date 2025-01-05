@@ -1,5 +1,15 @@
 <script setup>
 	import {ipcRenderer} from 'electron'
+	import { useToast } from "primevue/usetoast";
+	import { useConfirm } from "primevue/useconfirm";
+	import { useStore } from 'vuex';
+
+	const store = useStore();
+	const toast = useToast();
+	const confirm = useConfirm();
+	store.commit('notice/setToast', toast);
+	store.commit('notice/setConfirm', confirm);
+
 	const emit = () =>{
 	  ipcRenderer.send('message',123)
 	}
@@ -12,6 +22,7 @@
 
 <template>
 	<Toast />
+	<ConfirmDialog></ConfirmDialog>
 	<router-view />
 </template>
 

@@ -8,6 +8,7 @@ import ToastService from 'primevue/toastservice';
 import DialogService from 'primevue/dialogservice';
 import ConfirmationService from 'primevue/confirmationservice';
 import { useComponent } from './components';
+import { useDirective } from './directives';
 import bootstrap from "@/bootstrap";
 import MyPreset from './theme';
 import '@/assets/styles.scss';
@@ -37,6 +38,7 @@ app.mixin({
 });
 
 useComponent(app);
+useDirective(app);
 app.use(store);
 app.use(ToastService);
 app.use(DialogService);
