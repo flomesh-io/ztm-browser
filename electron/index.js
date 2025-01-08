@@ -72,7 +72,7 @@ const createWindow = (width, height) => {
 		ipcMain.on('create-new-window', (e,url,proxy) => {
 		  console.log(`proxy is ${proxy}`)
 			if(proxy){
-				app.setProxy({proxyRules: `http=foopy,socks5://${proxy}`}).then(()=>{
+				app.setProxy({proxyRules: `http=${proxy},socks5://${proxy}`}).then(()=>{
 					const newWindow = new BrowserWindow({
 						parent: win,
 					  width: 768,
