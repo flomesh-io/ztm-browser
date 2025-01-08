@@ -42,7 +42,7 @@ const createWindow = (width, height) => {
 			win.loadFile(join(__dirname,'../index.html'))
     }else{
 			// leftView.webContents.loadURL('https://electronjs.org')
-			const devServerUrl = "http://127.0.0.1:1422";
+			const devServerUrl = "http://localhost:1422";
 			console.log(devServerUrl);
 			win.loadURL(devServerUrl)
     }
@@ -71,23 +71,40 @@ const createWindow = (width, height) => {
 		
 		// 监听来自渲染进程的请求，创建新窗口
 		ipcMain.on('create-new-window', (e,url,proxy) => {
-		  const newWindow = new BrowserWindow({
-				parent: win,
-		    width: 768,
-		    height: 648,
-				webPreferences:{
-					nodeIntegration: true,
-					contextIsolation: false,
-					devTools: devTools == 'open',
-					webviewTag: true,
-		      preload: join(__dirname, 'preload.js'),
-				}
-		  });
-			console.log("8888")
-		  newWindow.loadURL(url); 
+		  console.log(`proxy is ${proxy}`)
 			if(proxy){
-			console.log(proxy)
-				app.setProxy({proxyRules: `socks5://${proxy}`})
+				app.setProxy({proxyRules: `socks5://${proxy}`}),then(()=>{
+					const newWindow = new BrowserWindow({
+						parent: win,
+					  width: 768,
+					  height: 648,
+						webPreferences:{
+							nodeIntegration: true,
+							contextIsolation: false,
+							devTools: devTools == 'open',
+							webviewTag: true,
+					    preload: join(__dirname, 'preload.js'),
+						}
+					});
+					newWindow.loadURL(url); 
+					app.resolveProxy(url).then((p)=>{
+						console.log(`resolveProxy is ${p}`)
+					})
+				})
+			} else {
+				const newWindow = new BrowserWindow({
+					parent: win,
+				  width: 768,
+				  height: 648,
+					webPreferences:{
+						nodeIntegration: true,
+						contextIsolation: false,
+						devTools: devTools == 'open',
+						webviewTag: true,
+				    preload: join(__dirname, 'preload.js'),
+					}
+				});
+				newWindow.loadURL(url); 
 			}
 		});
 		// setTimeout(() =>{
