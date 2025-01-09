@@ -72,12 +72,9 @@ const createWindow = (width, height) => {
 		ipcMain.on('create-new-window', (e,url,proxy) => {
 		  console.log(`proxy is ${proxy}`)
 			if(proxy){
-				// app.setProxy({
-				// 	mode:'fixed_servers',
-				// 	proxyRules: `http=${proxy},socks5://${proxy};https=${proxy},socks5://${proxy}`
-				// }).then(()=>{
 				const customSession = session.fromPartition('persist:webview-session');
 				customSession.setProxy({
+					mode:'fixed_servers',
 				  proxyRules: `http=${proxy},socks5://${proxy};https=${proxy},socks5://${proxy}`,
 				}).then(() => {
 				  console.log('Proxy is set for webview');
@@ -139,11 +136,11 @@ const createWindow = (width, height) => {
 }
 
 
- 
-
-// 运行
-
 app.whenReady().then((event) => {
 	const { width, height } = screen.getPrimaryDisplay().workAreaSize
-	createWindow(width, height)
+	createWindow(width, height);
+	app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+		event.preventDefault()
+		callback(true)
+	})
 })
