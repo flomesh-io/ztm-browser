@@ -139,8 +139,8 @@ const createWindow = (width, height) => {
 app.whenReady().then((event) => {
 	const { width, height } = screen.getPrimaryDisplay().workAreaSize
 	createWindow(width, height);
-	app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
-		event.preventDefault()
-		callback(true)
-	})
+	// app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+	// 	event.preventDefault()
+	// 	callback(true)
+	// })
 })
