@@ -72,10 +72,15 @@ const createWindow = (width, height) => {
 		ipcMain.on('create-new-window', (e,url,proxy) => {
 		  console.log(`proxy is ${proxy}`)
 			if(proxy){
-				app.setProxy({
-					mode:'fixed_servers',
-					proxyRules: `http=${proxy},socks5://${proxy};https=${proxy},socks5://${proxy}`
-				}).then(()=>{
+				// app.setProxy({
+				// 	mode:'fixed_servers',
+				// 	proxyRules: `http=${proxy},socks5://${proxy};https=${proxy},socks5://${proxy}`
+				// }).then(()=>{
+				const customSession = session.fromPartition('persist:webview-session');
+				customSession.setProxy({
+				  proxyRules: `http=${proxy},socks5://${proxy};https=${proxy},socks5://${proxy}`,
+				}).then(() => {
+				  console.log('Proxy is set for webview');
 					const newWindow = new BrowserWindow({
 						parent: win,
 					  width: 768,
@@ -86,29 +91,28 @@ const createWindow = (width, height) => {
 							devTools: devTools == 'open',
 							webviewTag: true,
 					    preload: join(__dirname, 'preload.js'),
+							session: customSession
 						}
 					});
 					newWindow.loadURL(url); 
-					app.resolveProxy(url).then((p)=>{
+					customSession.resolveProxy(url).then((p)=>{
 						console.log(`resolveProxy is ${p}`)
 					})
 				})
 			} else {
-				app.setProxy({mode:'direct'}).then(()=>{
-					const newWindow = new BrowserWindow({
-						parent: win,
-					  width: 768,
-					  height: 648,
-						webPreferences:{
-							nodeIntegration: true,
-							contextIsolation: false,
-							devTools: devTools == 'open',
-							webviewTag: true,
-					    preload: join(__dirname, 'preload.js'),
-						}
-					});
-					newWindow.loadURL(url); 
-				})
+				const newWindow = new BrowserWindow({
+					parent: win,
+					width: 768,
+					height: 648,
+					webPreferences:{
+						nodeIntegration: true,
+						contextIsolation: false,
+						devTools: devTools == 'open',
+						webviewTag: true,
+						preload: join(__dirname, 'preload.js'),
+					}
+				});
+				newWindow.loadURL(url); 
 			}
 		});
 		// setTimeout(() =>{
