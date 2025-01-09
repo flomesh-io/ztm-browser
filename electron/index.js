@@ -72,7 +72,10 @@ const createWindow = (width, height) => {
 		ipcMain.on('create-new-window', (e,url,proxy) => {
 		  console.log(`proxy is ${proxy}`)
 			if(proxy){
-				app.setProxy({mode:'fixed_servers',proxyRules: `http=${proxy},socks5://${proxy};https=${proxy},socks5://${proxy}`}).then(()=>{
+				app.setProxy({
+					mode:'fixed_servers',
+					proxyRules: `http=${proxy},socks5://${proxy};https=${proxy},socks5://${proxy}`
+				}).then(()=>{
 					const newWindow = new BrowserWindow({
 						parent: win,
 					  width: 768,
@@ -91,19 +94,21 @@ const createWindow = (width, height) => {
 					})
 				})
 			} else {
-				const newWindow = new BrowserWindow({
-					parent: win,
-				  width: 768,
-				  height: 648,
-					webPreferences:{
-						nodeIntegration: true,
-						contextIsolation: false,
-						devTools: devTools == 'open',
-						webviewTag: true,
-				    preload: join(__dirname, 'preload.js'),
-					}
-				});
-				newWindow.loadURL(url); 
+				app.setProxy({mode:'direct'}).then(()=>{
+					const newWindow = new BrowserWindow({
+						parent: win,
+					  width: 768,
+					  height: 648,
+						webPreferences:{
+							nodeIntegration: true,
+							contextIsolation: false,
+							devTools: devTools == 'open',
+							webviewTag: true,
+					    preload: join(__dirname, 'preload.js'),
+						}
+					});
+					newWindow.loadURL(url); 
+				})
 			}
 		});
 		// setTimeout(() =>{
