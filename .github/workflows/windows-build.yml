@@ -23,9 +23,8 @@ jobs:
       uses: ilammy/setup-nasm@v1
     - name: build app
       run: |
-        cd gui
         yarn install
-        set NODE_OPTIONS=--max_old_space_size=4096 && yarn build:base
+        set NODE_OPTIONS=--max_old_space_size=4096 && yarn build
 
     - uses: actions/upload-artifact@v4
       with:
