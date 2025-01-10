@@ -1,6 +1,6 @@
 {
 	"name": "ztm-browser",
-	"productName": "ztm browser",
+	"productName": "ztbrowser",
 	"version": "1.0.0",
 	"scripts": {
 		"dev": "vite",
@@ -8,8 +8,8 @@
 		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
 	},
 	"build": {
-		"appId": "com.ztmesh.desktop",
-		"productName": "ZTMesh",
+		"appId": "com.ztm.browser",
+		"productName": "ZTBrowser",
 		"asar": true,
 		"copyright": "Copyright © 2024 flomesh",
 		"directories": {
