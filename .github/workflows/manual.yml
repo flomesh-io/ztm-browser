@@ -1,0 +1,33 @@
+name: windows-build
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+      with:
+        msbuild-architecture: x64
+    - uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: "~3.25.0"  # <--= optional, use most recent 3.25.x version
+        ninjaVersion: "^1.11.1"
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+    - run: npm install -g win-node-env
+    - name: Install NASM
+      uses: ilammy/setup-nasm@v1
+    - name: build app
+      run: |
+        cd gui
+        yarn install
+        set NODE_OPTIONS=--max_old_space_size=4096 && yarn build:base
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: ZTBrowser
+        path: ./release/ZTBrowser_1.0.0.exe
