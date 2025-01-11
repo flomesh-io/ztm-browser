@@ -16,8 +16,9 @@ const createWindow = (width, height) => {
 	  callback({
 	    responseHeaders: {
 	      ...details.responseHeaders,
-	      'Content-Security-Policy': ['script-src * \'unsafe-inline\' \'unsafe-eval\';']
-	    }
+	      'Content-Security-Policy': ['script-src * \'unsafe-inline\' \'unsafe-eval\';'],
+				'Access-Control-Allow-Origin': ['*']
+			}
 	  })
 	})
 	const devTools = import.meta.env.VITE_APP_DEV_TOOLS;

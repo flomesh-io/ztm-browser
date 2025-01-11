@@ -75,11 +75,11 @@ const getListen = () => {
 const saving = ref(false);
 const start = (app) => {
 	saving.value = true;
-	appService.startApp(appOption.value).then(()=>{
+	// appService.startApp(appOption.value).then(()=>{
 		isRunning.value = true;
 		saving.value = false;
 		getListen();
-	})
+	// })
 }
 const shortcutApps = ref([]);
 const loadshortcut = () => {

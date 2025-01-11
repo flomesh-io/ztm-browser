@@ -31,7 +31,7 @@ function getUrl(url){
 	const devPath = localStorage.getItem("DEV_BASE")
 	if(!!devPath){
 		return `${devPath}${url}`
-	}else if(!window.__TAURI_INTERNALS__ || url.indexOf('://')>=0){
+	}else if(url.indexOf('://')>=0){
 		return `${path}${url}`
 	} else {
 		return `http://127.0.0.1:${getPort()}${path}${url}`
@@ -74,7 +74,7 @@ function getLocalUrl(url){
 	}
 }
 const getPort = () => {
-	const VITE_APP_API_PORT = localStorage.getItem("VITE_APP_API_PORT") || (!!location?.port && location.port>=2000?location.port:null);
+	const VITE_APP_API_PORT = localStorage.getItem("VITE_APP_API_PORT");
 	return VITE_APP_API_PORT || DEFAULT_VITE_APP_API_PORT || 7777;
 }
 const setPort = (port) => {
@@ -95,7 +95,6 @@ const toastMessage = async (e) => {
 			}
 		}
 	}
-	debugger
 	if(!!result){
 		toast.add({ severity: 'error', summary: 'Tips', detail: `${result}`, life: 3000 });
 	}else if(!!e?.response?.status && !!e?.response?.data){
