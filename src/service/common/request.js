@@ -28,13 +28,10 @@ function getUrl(url){
 			path = params.join("/")
 		}
 	}
-	const devPath = localStorage.getItem("DEV_BASE")
-	if(!!devPath){
-		return `${devPath}${url}`
-	}else if(url.indexOf('://')>=0){
+	if(url.indexOf('://')>=0){
 		return url
 	} else {
-		return `http://127.0.0.1:${getPort()}${path}${url}`
+		return `http://127.0.0.1:${getPort()}${url}`
 	}
 }
 
