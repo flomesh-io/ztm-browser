@@ -32,47 +32,12 @@ function getUrl(url){
 	if(!!devPath){
 		return `${devPath}${url}`
 	}else if(url.indexOf('://')>=0){
-		return `${path}${url}`
+		return url
 	} else {
 		return `http://127.0.0.1:${getPort()}${path}${url}`
 	}
 }
 
-function getMetaUrl(url){
-	let path = "";
-	if(location.pathname){
-		let params = location.pathname.split('/');
-		if(params.length >= 8){
-			params.splice(params.length-1,1)
-			path = params.join("/")
-		}
-	}
-	const devPath = localStorage.getItem("DEV_BASE")
-	if(!!devPath){
-		return `http://127.0.0.1:${getPort()}${devPath}${url}`
-	}else if(!window.__TAURI_INTERNALS__ || url.indexOf('://')>=0){
-		return `${path}${url}`
-	} else {
-		return `http://127.0.0.1:${getPort()}${path}${url}`
-	}
-}
-function getLocalUrl(url){
-	let path = "";
-	if(location.pathname){
-		let params = location.pathname.split('/');
-		if(params.length >= 8){
-			params.splice(params.length-1,1)
-			path = params.join("/")
-		}
-	}
-	if(location.port<2000){
-		return `${url}`
-	}else if(!window.__TAURI_INTERNALS__ || url.indexOf('://')>=0){
-		return `${path}${url}`
-	} else {
-		return `http://127.0.0.1:${getPort()}${path}${url}`
-	}
-}
 const getPort = () => {
 	const VITE_APP_API_PORT = localStorage.getItem("VITE_APP_API_PORT");
 	return VITE_APP_API_PORT || DEFAULT_VITE_APP_API_PORT || 7777;
@@ -139,17 +104,6 @@ const getConfig  = (config, params, method) => {
 		}
 		return rtn;
 	}
-}
-async function localRequest(url, method, params, config) {
-	return axios.get(getLocalUrl(url), { params, ...config }).then((res) => {
-		if (res.status >= 400) {
-			const error = new Error(res.message);
-			error.status = res.status;
-			return Promise.reject(error);
-		} else {
-			return res?.data;
-		}
-	});
 }
 async function request(url, method, params, config) {
 		switch (method) {
@@ -343,11 +297,9 @@ export {
   METHOD,
   AUTH_TYPE,
 	getUrl,
-	getMetaUrl,
   request,
 	requestNM,
 	requestWithTimeout,
-	localRequest,
   merge,
   spread,
 	mock,
