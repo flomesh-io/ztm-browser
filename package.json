@@ -68,6 +68,7 @@
 			"deleteAppDataOnUninstall": false
 		},
 		"linux": {
+			"category": "Application",
 			"desktop": {
 				"StartupNotify": "false",
 				"Encoding": "UTF-8",
