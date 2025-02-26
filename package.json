@@ -72,21 +72,13 @@
 			"deleteAppDataOnUninstall": false
 		},
 		"linux": {
+			"icon": "./build/icon.icns"
 			"category": "Application",
-			"desktop": {
-				"StartupNotify": "false",
-				"Encoding": "UTF-8",
-				"MimeType": "x-scheme-handler/deeplink"
-			},
 			"target": [
+				"AppImage",
 				"rpm",
 				"deb"
 			]
-		},
-		"deb": {
-			"priority": "optional"
-		},
-		"rpm": {
 		},
 		"publish": [
 			{
