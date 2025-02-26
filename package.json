@@ -80,15 +80,13 @@
 			]
 		},
 		"deb": {
-			"priority": "optional",
-			"afterInstall": "installer/linux/after-install.tpl"
+			"priority": "optional"
 		},
 		"rpm": {
 			"fpm": [
 				"--before-install",
 				"installer/linux/before-install.tpl"
-			],
-			"afterInstall": "installer/linux/after-install.tpl"
+			]
 		},
 		"publish": [
 			{
