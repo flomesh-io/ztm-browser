@@ -75,7 +75,6 @@
 				"MimeType": "x-scheme-handler/deeplink"
 			},
 			"target": [
-				"AppImage",
 				"rpm",
 				"deb"
 			]
