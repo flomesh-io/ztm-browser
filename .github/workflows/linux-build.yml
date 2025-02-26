@@ -1,0 +1,22 @@
+name: linux-build
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: "~3.25.0"  # <--= optional, use most recent 3.25.x version
+        ninjaVersion: "^1.11.1"
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+    - name: Install NASM
+      uses: ilammy/setup-nasm@v1
+    - name: build app
+      run: |
+        yarn install
+        set NODE_OPTIONS=--max_old_space_size=4096 && yarn build
