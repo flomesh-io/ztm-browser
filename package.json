@@ -72,7 +72,7 @@
 			"deleteAppDataOnUninstall": false
 		},
 		"linux": {
-			"icon": "./build/icon.icns"
+			"icon": "./build/icon.icns",
 			"category": "Application",
 			"target": [
 				"AppImage",
