@@ -84,10 +84,6 @@
 			"priority": "optional"
 		},
 		"rpm": {
-			"fpm": [
-				"--before-install",
-				"installer/linux/before-install.tpl"
-			]
 		},
 		"publish": [
 			{
