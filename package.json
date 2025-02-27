@@ -2,10 +2,6 @@
 	"name": "ztm-browser",
 	"productName": "ztbrowser",
 	"version": "1.0.0",
-	"author": {
-	    "name": "lindongchen",
-	    "email": "lin@flomesh.cn"
-	},
 	"scripts": {
 		"dev": "vite",
 		"build": "vite build && electron-builder",
@@ -23,7 +19,7 @@
 			"dist"
 		],
 		"mac": {
-			"artifactName": "${productName}_${version}.${ext}",
+			"artifactName": "${productName}",
 			"target": "dmg",
 			"hardenedRuntime": true,
 			"gatekeeperAssess": true,
@@ -72,13 +68,27 @@
 			"deleteAppDataOnUninstall": false
 		},
 		"linux": {
-			"icon": "./build/icon.png",
-			"category": "Application",
+			"desktop": {
+				"StartupNotify": "false",
+				"Encoding": "UTF-8",
+				"MimeType": "x-scheme-handler/deeplink"
+			},
 			"target": [
 				"AppImage",
 				"rpm",
 				"deb"
 			]
+		},
+		"deb": {
+			"priority": "optional",
+			"afterInstall": "installer/linux/after-install.tpl"
+		},
+		"rpm": {
+			"fpm": [
+				"--before-install",
+				"installer/linux/before-install.tpl"
+			],
+			"afterInstall": "installer/linux/after-install.tpl"
 		},
 		"publish": [
 			{
