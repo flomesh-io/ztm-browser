@@ -9,7 +9,7 @@ fi
 DMG_PATH="$1"
 TMP_DIR="/tmp/dmg-content"
 NEW_DMG_PATH="$(dirname "$DMG_PATH")/$(basename "$DMG_PATH" .dmg)_signed.dmg"
-VOLUME_NAME="ZTBrowser 1.0.0-arm64"
+VOLUME_NAME="ZTBrowser"
 TEAM_ID="$4"
 MACOS_IDENTITY="Developer ID Application: Flomesh Limited ($TEAM_ID)"
 APPLE_ID="$2"
