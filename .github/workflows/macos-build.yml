@@ -24,4 +24,4 @@ jobs:
       with:
         name: ztm-browser_1.0.0-macos-arm64
         path: |
-          ./release/ztm-browser_1.0.0_macos-arm64.dmg
+          ./release/ZTBrowser_1.0.0.dmg
