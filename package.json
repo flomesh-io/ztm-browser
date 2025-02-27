@@ -12,7 +12,7 @@
 		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
 	},
 	"build": {
-		"appId": "com.ztm.browser",
+		"appId": "com.flomesh.ztm.browser",
 		"productName": "ZTBrowser",
 		"asar": true,
 		"copyright": "Copyright © 2024 flomesh",

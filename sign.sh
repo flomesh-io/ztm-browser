@@ -15,6 +15,10 @@ MACOS_IDENTITY="Developer ID Application: Flomesh Limited ($TEAM_ID)"
 APPLE_ID="$2"
 APPLE_PASSWORD="$3"
 
+hdiutil info
+hdiutil detach "/Volumes/$VOLUME_NAME"
+hdiutil attach "$DMG_PATH" -mountPoint "/Volumes/$VOLUME_NAME"
+
 echo "MOUNT DMG..."
 MOUNT_OUTPUT=$(hdiutil attach "$DMG_PATH")
 echo "MOUNTED: $MOUNT_OUTPUT"
@@ -39,26 +43,25 @@ ditto "$MOUNT_POINT" "$TMP_DIR"
 hdiutil detach "$MOUNT_POINT"
 
 # codesign
-codesign --deep --force --verify --verbose --options runtime --timestamp --sign "$MACOS_IDENTITY" "$TMP_DIR/ztm.app/Contents/MacOS/ztm"
-codesign --deep --force --verify --verbose --options runtime --timestamp --sign "$MACOS_IDENTITY" --entitlements - "$TMP_DIR/ztm.app"
+codesign --deep --force --verify --verbose --options runtime --timestamp --sign "$MACOS_IDENTITY" "$TMP_DIR/$VOLUME_NAME.app/Contents/MacOS/$VOLUME_NAME"
 
 # recreate DMG
 hdiutil create -volname "$VOLUME_NAME" -srcfolder "$TMP_DIR" -ov -format UDZO "$NEW_DMG_PATH"
 
 # codesign DMG 
-codesign --deep --force --verify --verbose --options runtime --timestamp --sign "$MACOS_IDENTITY" --entitlements - "$NEW_DMG_PATH"
+codesign --deep --force --verify --verbose --options runtime --timestamp --sign "$MACOS_IDENTITY" - "$NEW_DMG_PATH"
 
 # submit DMG to xcrun
 xcrun notarytool submit "$NEW_DMG_PATH" --apple-id "$APPLE_ID" --password "$APPLE_PASSWORD" --team-id "$TEAM_ID" --wait
 
 echo "stapling .app..."
-xcrun stapler staple "$TMP_DIR/ztm.app"
+xcrun stapler staple "$TMP_DIR/$VOLUME_NAME.app"
 xcrun stapler staple "$NEW_DMG_PATH"
 
 echo "valid .app..."
-xcrun stapler validate "$TMP_DIR/ztm.app"
+xcrun stapler validate "$TMP_DIR/$VOLUME_NAME.app"
 xcrun stapler validate "$NEW_DMG_PATH"
-spctl --assess --verbose=4 "$TMP_DIR/ztm.app"
+spctl --assess --verbose=4 "$TMP_DIR/$VOLUME_NAME.app"
 
 
 echo "valid DMG..."
