@@ -7,9 +7,58 @@ let history = {};
 if (existsSync(historyPath)) {
   history = JSON.parse(readFileSync(historyPath, 'utf8'));
 }
-
+let lastProxy = '';
+const devTools = import.meta.env.VITE_APP_DEV_TOOLS;
 // 创建窗口
 let win
+const openWindow = (url, _proxy) => {
+	const proxy = _proxy == 'inner'?lastProxy:_proxy;
+	if(_proxy!='inner'){
+		lastProxy = _proxy;
+	}
+	console.log(`proxy is ${proxy}`)
+	console.log(`lastProxy is ${lastProxy}`)
+	if(proxy){
+		const customSession = session.fromPartition('persist:webview-session');
+		customSession.setProxy({
+			mode:'fixed_servers',
+		  proxyRules: `http=${proxy},socks5://${proxy};https=${proxy},socks5://${proxy};`,
+		}).then(() => {
+		  console.log('Proxy is set for webview');
+			const newWindow = new BrowserWindow({
+				parent: win,
+			  width: 768,
+			  height: 648,
+				webPreferences:{
+					nodeIntegration: true,
+					contextIsolation: false,
+					devTools: devTools == 'open',
+					webviewTag: true,
+			    preload: join(__dirname, 'preload.js'),
+					session: customSession
+				}
+			});
+			newWindow.loadURL(url); 
+			customSession.resolveProxy(url).then((p)=>{
+				console.log(`resolveProxy is ${p}`)
+			})
+		})
+	} else {
+		const newWindow = new BrowserWindow({
+			parent: win,
+			width: 768,
+			height: 648,
+			webPreferences:{
+				nodeIntegration: true,
+				contextIsolation: false,
+				devTools: devTools == 'open',
+				webviewTag: true,
+				preload: join(__dirname, 'preload.js'),
+			}
+		});
+		newWindow.loadURL(url); 
+	}
+}
 const createWindow = (width, height) => {
 	
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
@@ -21,7 +70,6 @@ const createWindow = (width, height) => {
 			}
 	  })
 	})
-	const devTools = import.meta.env.VITE_APP_DEV_TOOLS;
     win = new BrowserWindow({
 			width: 768, 
 			height: 648,
@@ -71,47 +119,7 @@ const createWindow = (width, height) => {
 		
 		// 监听来自渲染进程的请求，创建新窗口
 		ipcMain.on('create-new-window', (e,url,proxy) => {
-		  console.log(`proxy is ${proxy}`)
-			if(proxy){
-				const customSession = session.fromPartition('persist:webview-session');
-				customSession.setProxy({
-					mode:'fixed_servers',
-				  proxyRules: `http=${proxy},socks5://${proxy};https=${proxy},socks5://${proxy}`,
-				}).then(() => {
-				  console.log('Proxy is set for webview');
-					const newWindow = new BrowserWindow({
-						parent: win,
-					  width: 768,
-					  height: 648,
-						webPreferences:{
-							nodeIntegration: true,
-							contextIsolation: false,
-							devTools: devTools == 'open',
-							webviewTag: true,
-					    preload: join(__dirname, 'preload.js'),
-							session: customSession
-						}
-					});
-					newWindow.loadURL(url); 
-					customSession.resolveProxy(url).then((p)=>{
-						console.log(`resolveProxy is ${p}`)
-					})
-				})
-			} else {
-				const newWindow = new BrowserWindow({
-					parent: win,
-					width: 768,
-					height: 648,
-					webPreferences:{
-						nodeIntegration: true,
-						contextIsolation: false,
-						devTools: devTools == 'open',
-						webviewTag: true,
-						preload: join(__dirname, 'preload.js'),
-					}
-				});
-				newWindow.loadURL(url); 
-			}
+		 openWindow(url,proxy)
 		});
 		// setTimeout(() =>{
 		// 	win.webContents.send('load',{massage:"初始化完成"})
