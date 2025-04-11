@@ -431,7 +431,7 @@ const loadDom = () => {
 				historyMenu.style.display=historyMenu.style.display=="none"?"block":"none";
 			});
 		}
-		const historyElement = document.querySelector('.ztm-history');
+		const historyElement = document.querySelector('.ztm-pop');
 		if(historyElement){
 			historyElement.addEventListener('click', (event) => {
 				const href = event.target.dataset?.href;
