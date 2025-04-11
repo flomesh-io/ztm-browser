@@ -9,6 +9,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "vite build && electron-builder",
+		"build-mac": "vite build && electron-builder --mac --x64 --publish never",
 		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
 	},
 	"build": {
@@ -23,10 +24,13 @@
 			"dist"
 		],
 		"mac": {
+			"category": "public.app-category.developer-tools",
 			"artifactName": "${productName}_${version}.${ext}",
 			"target": "dmg",
 			"hardenedRuntime": true,
-			"gatekeeperAssess": true,
+			"gatekeeperAssess": false,
+			"entitlements": "entitlements.plist",
+			"entitlementsInherit": "entitlements.plist",
 			"extendInfo": {
 				"NSAppleEventsUsageDescription": "Let me use Apple Events.",
 				"NSCameraUsageDescription": "Let me use the camera.",
